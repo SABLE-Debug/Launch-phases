@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<meta name="theme-color" content="#050404">
+<title>AKHARA Launch Phases</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C9A84C;--gold2:#B8964E;--black:#050404;--white:#F2EDE4;--grey:rgba(242,237,228,0.55);--gold-line:rgba(184,150,78,0.35)}
+html{background:#050404 !important;min-height:100%;height:100%}html,body,div,section{background-color:#050404}
+body{background:#050404;color:#F2EDE4;font-family:'DM Mono',monospace;-webkit-text-fill-color:#F2EDE4;min-height:100vh;overflow-x:hidden;padding-bottom:80px}
+a{color:#C9A84C;text-decoration:none;-webkit-text-fill-color:#C9A84C}
+em{font-style:italic;color:#C9A84C;-webkit-text-fill-color:#C9A84C}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:#050404;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:32px;transition:opacity .9s}
+#loader.out{opacity:0;pointer-events:none}
+.l-bar{width:180px;height:1px;background:rgba(201,168,76,0.15);position:relative;overflow:hidden}
+.l-bar::after{content:’’;position:absolute;left:-100%;top:0;width:100%;height:100%;background:#C9A84C;animation:bar-fill 2.2s .2s ease forwards}
+@keyframes bar-fill{to{left:0}}
+.l-text{font-size:8px;letter-spacing:6px;color:#C9A84C;-webkit-text-fill-color:#C9A84C}
+.l-svg circle, .l-svg line{stroke:#B8964E}
+.l-svg .l-dot{fill:#B8964E;opacity:0;animation:dot-in .3s 2.1s ease forwards}
+.l-outer{stroke-dasharray:1056;stroke-dashoffset:1056;animation:draw 1.2s .2s ease forwards}
+.l-inner{stroke-dasharray:679;stroke-dashoffset:679;animation:draw .9s .8s ease forwards}
+.l-vert{stroke-dasharray:392;stroke-dashoffset:392;animation:draw .6s 1.3s ease forwards}
+.l-horiz{stroke-dasharray:384;stroke-dashoffset:384;animation:draw .5s 1.6s ease forwards}
+.l-tick{stroke-dasharray:120;stroke-dashoffset:120;animation:draw .3s 1.9s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes dot-in{to{opacity:1}}
+
+/* PROGRESS BAR */
+#progress{position:fixed;top:0;left:0;height:2px;background:#C9A84C;z-index:9998;width:0%}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;background:rgba(5,4,4,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(184,150,78,0.2)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-wm{font-family:‘Cormorant Garamond’,serif;font-size:16px;letter-spacing:8px;font-weight:300;color:#F2EDE4;-webkit-text-fill-color:#F2EDE4}
+.nav-prog{font-size:8px;letter-spacing:3px;color:#C9A84C;-webkit-text-fill-color:#C9A84C}
+
+/* HERO */
+.hero{min-height:35vh;display:flex;align-items:center;padding:120px 24px 50px;background:#050404}
+.hero-eyebrow{font-size:8px;letter-spacing:5px;color:#C9A84C;-webkit-text-fill-color:#C9A84C;margin-bottom:18px}
+.hero-h1{font-family:‘Cormorant Garamond’,serif;font-size:clamp(38px,9vw,72px);font-weight:300;line-height:1;margin-bottom:18px;color:#F2EDE4;-webkit-text-fill-color:#F2EDE4}
+.hero-h1 em{color:#C9A84C;-webkit-text-fill-color:#C9A84C;font-style:italic}
+.hero-sub{font-size:11px;letter-spacing:.8px;color:rgba(242,237,228,0.65);-webkit-text-fill-color:rgba(242,237,228,0.65);line-height:1.8;max-width:560px}
+@media(min-width:700px){.hero{padding:130px 60px 60px}}
+
+/* LEGEND */
+.legend{display:flex;gap:20px;padding:0 24px 36px;flex-wrap:wrap;background:#050404}
+@media(min-width:700px){.legend{padding:0 60px 40px}}
+.leg-item{display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:2px;color:rgba(242,237,228,0.65);-webkit-text-fill-color:rgba(242,237,228,0.65)}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.leg-dot.you{background:#C9A84C}
+.leg-dot.claude{background:rgba(242,237,228,0.4);border:1px solid rgba(242,237,228,0.3)}
+
+/* SUMMARY */
+.summary{margin:0 24px;padding:28px 22px;border:1px solid rgba(184,150,78,0.25);background:#0a0806;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(min-width:700px){.summary{margin:0 60px;grid-template-columns:repeat(4,1fr);padding:32px 28px}}
+.sum-item{text-align:center}
+.sum-n{font-family:‘Cormorant Garamond’,serif;font-size:36px;font-weight:300;color:#C9A84C;-webkit-text-fill-color:#C9A84C;display:block;line-height:1}
+.sum-l{font-size:7px;letter-spacing:3px;color:rgba(242,237,228,0.5);-webkit-text-fill-color:rgba(242,237,228,0.5);margin-top:6px;display:block}
+
+/* CHAPTER BREAK */
+.chap{height:1px;background:rgba(201,168,76,0.1);margin:50px 24px 0;position:relative;overflow:hidden}
+.chap::after{content:’’;position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(to right,transparent,#C9A84C,transparent);animation:chap-sweep 4s ease-in-out infinite}
+@keyframes chap-sweep{0%{left:-100%}100%{left:100%}}
+
+/* PHASES */
+.phases{padding:0 24px 80px;background:#050404}
+@media(min-width:700px){.phases{padding:0 60px 100px}}
+
+.phase{margin-bottom:50px}
+.phase-header{display:flex;align-items:flex-start;gap:18px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid rgba(184,150,78,0.25)}
+.phase-num{font-family:‘Cormorant Garamond’,serif;font-size:54px;font-weight:300;color:rgba(201,168,76,0.2);-webkit-text-fill-color:rgba(201,168,76,0.2);line-height:1;flex-shrink:0}
+.phase-meta{flex:1;min-width:0}
+.phase-tag{font-size:7px;letter-spacing:4px;color:#C9A84C;-webkit-text-fill-color:#C9A84C;display:block;margin-bottom:8px}
+.phase-title{font-family:‘Cormorant Garamond’,serif;font-size:clamp(22px,4vw,36px);font-weight:300;line-height:1.1;color:#F2EDE4;-webkit-text-fill-color:#F2EDE4;margin-bottom:6px}
+.phase-title em{color:#C9A84C;-webkit-text-fill-color:#C9A84C;font-style:italic}
+.phase-time{font-size:8px;letter-spacing:3px;color:rgba(201,168,76,0.6);-webkit-text-fill-color:rgba(201,168,76,0.6)}
+
+.status{display:inline-block;font-size:7px;letter-spacing:2px;padding:3px 9px;border-radius:2px;margin-left:8px}
+.status.today{background:rgba(201,168,76,0.18);color:#C9A84C;-webkit-text-fill-color:#C9A84C;border:1px solid rgba(201,168,76,0.4)}
+.status.weekend{background:rgba(242,237,228,0.06);color:rgba(242,237,228,0.55);-webkit-text-fill-color:rgba(242,237,228,0.55);border:1px solid rgba(242,237,228,0.15)}
+.status.after{background:rgba(242,237,228,0.04);color:rgba(242,237,228,0.4);-webkit-text-fill-color:rgba(242,237,228,0.4);border:1px solid rgba(242,237,228,0.1)}
+
+.phase-outcome{font-size:10px;letter-spacing:.5px;color:rgba(242,237,228,0.65);-webkit-text-fill-color:rgba(242,237,228,0.65);line-height:1.7;margin-bottom:22px;padding:14px 18px;border-left:2px solid #C9A84C;background:rgba(201,168,76,0.05)}
+
+.tasks{display:flex;flex-direction:column;gap:8px}
+@media(min-width:900px){.tasks{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
+
+/* TASK CARD */
+.task{display:flex;gap:14px;padding:16px 18px;border:1px solid rgba(184,150,78,0.25);background:#0d0b09;align-items:flex-start;transition:border-color .3s}
+.task.you-task{border-left:2px solid #C9A84C}
+.task.claude-task{border-left:2px solid rgba(242,237,228,0.3)}
+.task:hover{border-color:rgba(201,168,76,0.45)}
+.task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.task-dot.you{background:#C9A84C}
+.task-dot.claude{background:rgba(242,237,228,0.4)}
+.task-body{flex:1;min-width:0}
+.task-owner{font-size:7px;letter-spacing:3px;display:block;margin-bottom:6px}
+.task-owner.you{color:#C9A84C;-webkit-text-fill-color:#C9A84C}
+.task-owner.claude{color:rgba(242,237,228,0.55);-webkit-text-fill-color:rgba(242,237,228,0.55)}
+.task-title{font-family:‘Cormorant Garamond’,serif;font-size:17px;font-weight:300;line-height:1.25;color:#F2EDE4;-webkit-text-fill-color:#F2EDE4;margin-bottom:6px}
+.task-detail{font-size:10px;letter-spacing:.3px;color:rgba(242,237,228,0.6);-webkit-text-fill-color:rgba(242,237,228,0.6);line-height:1.6}
+.task-note{font-size:9px;color:#C9A84C;-webkit-text-fill-color:#C9A84C;margin-top:8px;font-style:italic;display:block}
+
+/* CHECKBOX - the thing that wasn’t working */
+.task-check{
+width:24px;
+height:24px;
+min-width:24px;
+min-height:24px;
+border:2px solid #C9A84C;
+border-radius:4px;
+flex-shrink:0;
+margin-top:2px;
+cursor:pointer;
+position:relative;
+background:transparent;
+display:block;
+transition:background .25s;
+-webkit-appearance:none;
+appearance:none;
+}
+.task-check.done{
+background:#C9A84C;
+}
+.task-check.done::after{
+content:’’;
+position:absolute;
+left:7px;
+top:2px;
+width:6px;
+height:12px;
+border:solid #050404;
+border-width:0 2.5px 2.5px 0;
+transform:rotate(45deg);
+}
+
+/* PROGRESS BARS */
+.phase-progress{display:flex;align-items:center;gap:12px;margin-top:14px}
+.pp-bar{flex:1;height:2px;background:rgba(201,168,76,0.15);overflow:hidden}
+.pp-fill{height:100%;background:#C9A84C;width:0%;transition:width .4s ease}
+.pp-text{font-size:8px;letter-spacing:2px;color:rgba(201,168,76,0.7);-webkit-text-fill-color:rgba(201,168,76,0.7);flex-shrink:0}
+
+/* HOW IT CONNECTS BLOCK */
+.connect-block{margin-top:28px;padding:24px 20px;border:1px solid rgba(184,150,78,0.25);background:#0a0806}
+.connect-label{font-size:7px;letter-spacing:4px;color:#C9A84C;-webkit-text-fill-color:#C9A84C;margin-bottom:12px;display:block}
+.connect-intro{font-size:11px;letter-spacing:.5px;color:rgba(242,237,228,0.65);-webkit-text-fill-color:rgba(242,237,228,0.65);line-height:1.8;margin-bottom:14px}
+.connect-flow{font-family:‘DM Mono’,monospace;font-size:10px;color:rgba(242,237,228,0.75);-webkit-text-fill-color:rgba(242,237,228,0.75);line-height:1.9;background:#050404;padding:18px;border-left:2px solid #C9A84C}
+.connect-flow b{color:#C9A84C;-webkit-text-fill-color:#C9A84C;font-weight:500}
+
+/* SUB SECTION HEADERS */
+.sub-h{font-size:7px;letter-spacing:4px;color:#C9A84C;-webkit-text-fill-color:#C9A84C;margin-bottom:12px;display:block;margin-top:24px}
+.sub-h:first-child{margin-top:0}
+</style>
+
+</head>
+<body>
+
+<div id="loader">
+  <svg class="l-svg" width="64" height="72" viewBox="0 0 512 560" fill="none">
+    <circle class="l-outer" cx="256" cy="272" r="168" stroke-width="1.6"/>
+    <circle class="l-inner" cx="256" cy="272" r="108" stroke-width="1.2"/>
+    <line class="l-vert" x1="256" y1="88" x2="256" y2="480" stroke-width="1.4"/>
+    <line class="l-horiz" x1="64" y1="272" x2="448" y2="272" stroke-width="1.2"/>
+    <line class="l-tick" x1="196" y1="210" x2="316" y2="210" stroke-width="1" opacity=".8"/>
+    <circle class="l-dot" cx="256" cy="96" r="9"/>
+  </svg>
+  <div class="l-bar"></div>
+  <div class="l-text">LOADING LAUNCH PLAN</div>
+</div>
+
+<div id="progress"></div>
+
+<nav>
+  <div class="nav-logo">
+    <svg width="20" height="24" viewBox="0 0 512 560" fill="none">
+      <circle cx="256" cy="272" r="168" stroke="#B8964E" stroke-width="1.6"/>
+      <circle cx="256" cy="272" r="108" stroke="#B8964E" stroke-width="1.2"/>
+      <line x1="256" y1="88" x2="256" y2="480" stroke="#B8964E" stroke-width="1.4"/>
+      <line x1="64" y1="272" x2="448" y2="272" stroke="#B8964E" stroke-width="1.2"/>
+      <line x1="196" y1="210" x2="316" y2="210" stroke="#B8964E" stroke-width="1" opacity=".8"/>
+      <circle cx="256" cy="96" r="9" fill="#B8964E"/>
+    </svg>
+    <span class="nav-wm">AKHARA</span>
+  </div>
+  <span class="nav-prog" id="total-progress">0% COMPLETE</span>
+</nav>
+
+<div class="hero">
+  <div>
+    <p class="hero-eyebrow">AKHARA &middot; OFFICIAL LAUNCH ROADMAP</p>
+    <h1 class="hero-h1">From Zero<br>To <em>First Client.</em></h1>
+    <p class="hero-sub">Every task. Every phase. Exactly who does what. Check off as you go &mdash; gold is yours, white is Claude's. Tick each task when done.</p>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot you"></div><span>YOUR JOB</span></div>
+  <div class="leg-item"><div class="leg-dot claude"></div><span>CLAUDE'S JOB</span></div>
+</div>
+
+<div class="summary">
+  <div class="sum-item"><span class="sum-n" id="total-tasks">0</span><span class="sum-l">TOTAL TASKS</span></div>
+  <div class="sum-item"><span class="sum-n" id="your-tasks">0</span><span class="sum-l">YOUR TASKS</span></div>
+  <div class="sum-item"><span class="sum-n" id="claude-tasks">0</span><span class="sum-l">CLAUDE'S TASKS</span></div>
+  <div class="sum-item"><span class="sum-n" id="done-count">0</span><span class="sum-l">COMPLETED</span></div>
+</div>
+
+<div class="chap"></div>
+
+<div class="phases">
+
+<!-- PHASE 1 -->
+
+<div class="phase" id="phase-1">
+  <div class="phase-header">
+    <div class="phase-num">01</div>
+    <div class="phase-meta">
+      <span class="phase-tag">PHASE 01 &middot; DEPLOY <span class="status today">DO TODAY</span></span>
+      <div class="phase-title">Get The<br><em>Playbook Live.</em></div>
+      <span class="phase-time">30-60 MINUTES</span>
+    </div>
+  </div>
+  <div class="phase-outcome">By the end of this phase the playbook is publicly accessible at a real URL. Anyone you send it to can open it.</div>
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Upload playbook to GitHub</div><p class="task-detail">Open SABLE-Debug/PLAYBOOK repo. Upload akhara-playbook-final.html as index.html.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Enable GitHub Pages</div><p class="task-detail">Settings then Pages. Source: main branch, root. URL goes live in 2 minutes.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Buy the domain</div><p class="task-detail">Namecheap or Cloudflare. Search akhara.com, akhara.co, or akhara.agency. Around R200-400 per year.</p><span class="task-note">Optional &mdash; can skip and use GitHub URL for now</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">DNS setup instructions</div><p class="task-detail">Bring me the domain. I'll give you the exact CNAME records to point it to GitHub Pages.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-1"></div></div><span class="pp-text" id="pt-1">0/4</span></div>
+</div>
+
+<div class="chap"></div>
+
+<!-- PHASE 2 -->
+
+<div class="phase" id="phase-2">
+  <div class="phase-header">
+    <div class="phase-num">02</div>
+    <div class="phase-meta">
+      <span class="phase-tag">PHASE 02 &middot; ACCOUNTS <span class="status today">DO TODAY</span></span>
+      <div class="phase-title">Set Up<br><em>The Infrastructure.</em></div>
+      <span class="phase-time">45 MINUTES</span>
+    </div>
+  </div>
+  <div class="phase-outcome">By the end every account is created and connected. The rails are laid.</div>
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Confirm Claude API key is active</div><p class="task-detail">Go to console.anthropic.com then API Keys. Confirm you have a key with credits. If not, add $20 to start &mdash; that's months of usage.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Create Make.com account</div><p class="task-detail">Free tier is enough. This automates everything and connects Claude to your tools.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Create Notion workspace</div><p class="task-detail">New workspace called AKHARA. This is where employees store memory and logs.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Set up Wise account</div><p class="task-detail">For receiving international payments. Add USD, GBP, EUR currencies. Link FNB account for withdrawals.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build the full Notion workspace structure</div><p class="task-detail">Once Notion is set up, I'll build the complete internal structure. Employee SOPs, client tracker, lead pipeline, onboarding templates.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Write Make.com connection guide</div><p class="task-detail">Step by step for connecting Claude API to Make.com so you can follow it without guessing.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-2"></div></div><span class="pp-text" id="pt-2">0/6</span></div>
+</div>
+
+<div class="chap"></div>
+
+<!-- ACCOUNTS -->
+
+<div class="phase" id="phase-acc">
+  <div class="phase-header">
+    <div class="phase-num" style="font-size:36px;padding-top:6px">ACC</div>
+    <div class="phase-meta">
+      <span class="phase-tag">ACCOUNTS &middot; FULL LIST <span class="status today">SET UP BEFORE PHASE 3</span></span>
+      <div class="phase-title">Every Account<br><em>You Need.</em></div>
+      <span class="phase-time">2-3 HOURS TOTAL</span>
+    </div>
+  </div>
+  <div class="phase-outcome">Every account below is required before you can build and run AI employees. Free tiers marked &mdash; you only pay for what you actually use.</div>
+
+<span class="sub-h">CORE INFRASTRUCTURE — REQUIRED BEFORE ANYTHING</span>
+
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Anthropic Console</div><p class="task-detail">console.anthropic.com &mdash; where Claude API keys live. Add $20 credits to start.</p><span class="task-note">FREE to sign up &middot; ~$0.01-0.03 per message</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Make.com</div><p class="task-detail">make.com &mdash; the automation engine. Connects everything together.</p><span class="task-note">FREE tier 1000 ops/mo</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Notion</div><p class="task-detail">notion.so &mdash; memory storage for every employee. Logs, SOPs, client workspaces.</p><span class="task-note">FREE forever</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">GitHub</div><p class="task-detail">github.com &mdash; hosting for all AKHARA web properties via GitHub Pages.</p><span class="task-note">FREE forever</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+
+<span class="sub-h">PAYMENTS — REQUIRED BEFORE FIRST CLIENT</span>
+
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Wise</div><p class="task-detail">wise.com &mdash; receive international payments in USD/GBP/EUR. Convert to ZAR at real exchange rate, withdraw to FNB.</p><span class="task-note">FREE to set up &middot; small fee per conversion</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+
+<span class="sub-h">COMMUNICATION & BOOKING</span>
+
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Calendly</div><p class="task-detail">calendly.com &mdash; The Closer books every discovery call here automatically.</p><span class="task-note">FREE tier works fine</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Gmail</div><p class="task-detail">helloakhara@gmail.com &mdash; the inbox The Closer and The Operator monitor.</p><span class="task-note">FREE</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Slack</div><p class="task-detail">slack.com &mdash; your approval channel during Manual mode.</p><span class="task-note">FREE tier is enough</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+
+<span class="sub-h">CONTENT & DEMO</span>
+
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Buffer</div><p class="task-detail">buffer.com &mdash; The Strategist auto-publishes to X, Instagram, LinkedIn from here.</p><span class="task-note">FREE tier 3 channels</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Loom</div><p class="task-detail">loom.com &mdash; record once, send the demo to every prospect forever.</p><span class="task-note">FREE tier 25 videos</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+
+<span class="sub-h">OPTIONAL BUT RECOMMENDED</span>
+
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">HubSpot CRM</div><p class="task-detail">hubspot.com &mdash; The Closer logs leads here automatically.</p><span class="task-note">FREE forever</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Namecheap</div><p class="task-detail">namecheap.com &mdash; buy your AKHARA domain. ~R200-400/year.</p><span class="task-note">One-time purchase per year</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">PandaDoc</div><p class="task-detail">pandadoc.com &mdash; for sending and signing client contracts.</p><span class="task-note">FREE tier 5 docs/mo</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+
+  <div class="connect-block">
+    <span class="connect-label">HOW IT ALL CONNECTS</span>
+    <p class="connect-intro">Make.com is the hub. You give Make.com your Claude API key once &mdash; then it can trigger Claude automatically whenever anything happens.</p>
+    <div class="connect-flow">
+      <b>NEW EMAIL ARRIVES</b> &rarr; Make.com detects it &rarr; sends to Claude API &rarr; Claude drafts reply &rarr; sends &rarr; logs to Notion<br><br>
+      <b>LEAD QUALIFIES</b> &rarr; Claude tells Make.com &rarr; sends Calendly link &rarr; lead books call &rarr; HubSpot updated &rarr; you get Slack notification<br><br>
+      <b>CONTRACT SIGNED</b> &rarr; PandaDoc notifies Make.com &rarr; Notion workspace created &rarr; Wise invoice sent<br><br>
+      <b>PAYMENT RECEIVED</b> &rarr; Wise notifies Make.com &rarr; you get Slack alert &rarr; start building their employee
+    </div>
+  </div>
+
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-acc"></div></div><span class="pp-text" id="pt-acc">0/13</span></div>
+</div>
+
+<div class="chap"></div>
+
+<!-- PHASE 3 -->
+
+<div class="phase" id="phase-3">
+  <div class="phase-header">
+    <div class="phase-num">03</div>
+    <div class="phase-meta">
+      <span class="phase-tag">PHASE 03 &middot; INTERNAL WORKFORCE <span class="status weekend">THIS WEEKEND</span></span>
+      <div class="phase-title">Build Your<br><em>Four Employees.</em></div>
+      <span class="phase-time">1-2 DAYS</span>
+    </div>
+  </div>
+  <div class="phase-outcome">By the end AKHARA runs itself. The Closer handles leads. The Strategist posts. The Architect connects. The Operator answers.</div>
+  <div class="tasks">
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build The Closer system prompt</div><p class="task-detail">Full sales AI prompt. Qualification rules, tone, escalation logic, CRM commands. Ready to paste into Make.com.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Deploy The Closer in Make.com</div><p class="task-detail">Connect inbox to Claude API to Notion. 30-45 minutes with the guide.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build The Strategist system prompt</div><p class="task-detail">Full content agent. Brand voice, platform rules, content calendar, performance tracking.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Deploy The Strategist</div><p class="task-detail">Connect to Buffer for scheduling. Link to Notion for content calendar.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build The Architect system prompt</div><p class="task-detail">Full ops automation. Every trigger mapped: new lead, booked call, signed contract, payment received.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Deploy The Architect</div><p class="task-detail">Wire inbox, Notion, Calendly, Wise, Google Drive together.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build The Operator system prompt</div><p class="task-detail">FAQ agent. Pricing, process, timeline, capabilities. Plus escalation rules.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Deploy The Operator</div><p class="task-detail">Connect to your main contact channel.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Run Manual mode for 7 days</div><p class="task-detail">Every output goes to Slack approval first. You approve or edit. After 7 days move to Semi-Auto.</p><span class="task-note">Non-negotiable &mdash; build trust before going live</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-3"></div></div><span class="pp-text" id="pt-3">0/9</span></div>
+</div>
+
+<div class="chap"></div>
+
+<!-- PHASE 4 -->
+
+<div class="phase" id="phase-4">
+  <div class="phase-header">
+    <div class="phase-num">04</div>
+    <div class="phase-meta">
+      <span class="phase-tag">PHASE 04 &middot; FIRST CLIENT MATERIALS <span class="status weekend">THIS WEEKEND</span></span>
+      <div class="phase-title">Build Everything<br><em>You Need To Close.</em></div>
+      <span class="phase-time">3-4 HOURS</span>
+    </div>
+  </div>
+  <div class="phase-outcome">Demo, contract, payment link, onboarding flow. Everything to take a stranger from interested to signed in under 48 hours.</div>
+  <div class="tasks">
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build the 10-minute demo script</div><p class="task-detail">Word for word demo script personalised per industry. Ready to run live on a call.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Record 60-second Loom demo</div><p class="task-detail">Screen record The Closer handling a fake lead. One recording closes deals for months.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Draft client contract template</div><p class="task-detail">Full service agreement. Scope, payment terms, IP, termination. Ready for PandaDoc.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build onboarding questionnaire</div><p class="task-detail">Notion form every client fills before you build. Brand voice, tools, audience, escalation contacts.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Create Wise payment links</div><p class="task-detail">One link per tier setup fee: $500, $1250, $2500, $5000, $10000.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Write all 3 outreach sequences</div><p class="task-detail">Inbound follow-up, LinkedIn cold DM, email outreach. Personalisation variables included.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build client Notion workspace template</div><p class="task-detail">Duplicate this for every new client. SOP, brand voice doc, dashboard, weekly report.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-4"></div></div><span class="pp-text" id="pt-4">0/7</span></div>
+</div>
+
+<div class="chap"></div>
+
+<!-- PHASE 5 -->
+
+<div class="phase" id="phase-5">
+  <div class="phase-header">
+    <div class="phase-num">05</div>
+    <div class="phase-meta">
+      <span class="phase-tag">PHASE 05 &middot; FIRST CLIENT <span class="status after">WEEK 1-3</span></span>
+      <div class="phase-title">Find, Demo,<br><em>Close, Build.</em></div>
+      <span class="phase-time">UNTIL SIGNED</span>
+    </div>
+  </div>
+  <div class="phase-outcome">One paying client. Setup fee collected. Employee being built. The whole business just became real.</div>
+  <div class="tasks">
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Identify first 10 target businesses</div><p class="task-detail">Tell me the industry. I research 10 businesses with names, owners, pain points, personalised openers.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">First outreach batch goes out</div><p class="task-detail">Approve the 10 messages Claude drafts. Closer sends them. Wait for replies.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Take the discovery call</div><p class="task-detail">Use the demo script. Find their pain. Show the demo. Present as employee not tool. 30 minutes max.</p><span class="task-note">The ONE thing only you can do</span></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Send contract + collect 50% setup fee</div><p class="task-detail">Architect sends contract automatically. You confirm payment link sent. Don't build until paid.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build the client's AI employee</div><p class="task-detail">From their onboarding questionnaire I build the system prompt, workflow spec, memory structure.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Deploy + go live</div><p class="task-detail">Set up in Make.com. Test 20+ scenarios. Go live within 14 days of payment.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-5"></div></div><span class="pp-text" id="pt-5">0/6</span></div>
+</div>
+
+<div class="chap"></div>
+
+<!-- PHASE 6 -->
+
+<div class="phase" id="phase-6">
+  <div class="phase-header">
+    <div class="phase-num">06</div>
+    <div class="phase-meta">
+      <span class="phase-tag">PHASE 06 &middot; CASE STUDY <span class="status after">MONTH 2</span></span>
+      <div class="phase-title">Turn Results Into<br><em>The Next Client.</em></div>
+      <span class="phase-time">30 DAYS AFTER LIVE</span>
+    </div>
+  </div>
+  <div class="phase-outcome">Published case study that closes clients 2 and 3 without outreach. Flywheel starts turning.</div>
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Pull 30-day results from Notion</div><p class="task-detail">Leads handled, meetings booked, hours saved, revenue impact.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Write the full case study</div><p class="task-detail">Before/after. Numbers. Quote. Published as landing page + LinkedIn article + social posts.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">30 days of content from case study</div><p class="task-detail">Strategist turns it into 30 posts across X, IG, LinkedIn.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Ask client for referral</div><p class="task-detail">"Who do you know who'd benefit?" One question on the 30-day review call.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-6"></div></div><span class="pp-text" id="pt-6">0/4</span></div>
+</div>
+
+<div class="chap"></div>
+
+<!-- PHASE 7 -->
+
+<div class="phase" id="phase-7">
+  <div class="phase-header">
+    <div class="phase-num">07</div>
+    <div class="phase-meta">
+      <span class="phase-tag">PHASE 07 &middot; OFFICIAL WEBSITE <span class="status after">MONTH 2-3</span></span>
+      <div class="phase-title">Build The<br><em>Public Face.</em></div>
+      <span class="phase-time">1 DAY WITH CLAUDE</span>
+    </div>
+  </div>
+  <div class="phase-outcome">Public website with real case study embedded. Prospects land on proof, not potential.</div>
+  <div class="tasks">
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Send avatar + case study results</div><p class="task-detail">White suit avatar + client results. That's all I need to build the full website.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Build the full official AKHARA website</div><p class="task-detail">Hero, problem, offer, workforce preview, case study, contact. AKHARA design template. Mobile-first.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task you-task"><div class="task-dot you"></div><div class="task-body"><span class="task-owner you">YOUR JOB</span><div class="task-title">Connect domain</div><p class="task-detail">Point custom domain to official site. DNS settings, 10 minutes.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+    <div class="task claude-task"><div class="task-dot claude"></div><div class="task-body"><span class="task-owner claude">CLAUDE'S JOB</span><div class="task-title">Write all website copy</div><p class="task-detail">Every headline, body, CTA. SEO-optimised. AKHARA tone throughout.</p></div><div class="task-check" onclick="toggleCheck(this)"></div></div>
+  </div>
+  <div class="phase-progress"><div class="pp-bar"><div class="pp-fill" id="pp-7"></div></div><span class="pp-text" id="pt-7">0/4</span></div>
+</div>
+
+</div>
+
+<script>
+// LOADER
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    var l = document.getElementById('loader');
+    if(l) l.classList.add('out');
+  }, 2700);
+});
+
+// PROGRESS BAR
+window.addEventListener('scroll', function(){
+  var d = document.documentElement;
+  var p = document.getElementById('progress');
+  if(p) p.style.width = ((d.scrollTop/(d.scrollHeight-d.clientHeight))*100) + '%';
+});
+
+// CHECKBOX TOGGLE
+function toggleCheck(el){
+  el.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress(){
+  // Per-phase progress
+  var phases = ['1','2','acc','3','4','5','6','7'];
+  var totalDone = 0, totalYour = 0, totalClaude = 0, yourDone = 0, claudeDone = 0;
+
+  phases.forEach(function(p){
+    var phase = document.getElementById('phase-' + p);
+    if(!phase) return;
+    var checks = phase.querySelectorAll('.task-check');
+    var done = phase.querySelectorAll('.task-check.done').length;
+    var fill = document.getElementById('pp-' + p);
+    var txt = document.getElementById('pt-' + p);
+    if(fill) fill.style.width = (checks.length > 0 ? (done/checks.length)*100 : 0) + '%';
+    if(txt) txt.textContent = done + '/' + checks.length;
+  });
+
+  document.querySelectorAll('.task').forEach(function(t){
+    var isYou = t.classList.contains('you-task');
+    var checkEl = t.querySelector('.task-check');
+    var isDone = checkEl && checkEl.classList.contains('done');
+    if(isYou){ totalYour++; if(isDone){yourDone++; totalDone++;} }
+    else{ totalClaude++; if(isDone){claudeDone++; totalDone++;} }
+  });
+
+  var total = totalYour + totalClaude;
+  var els = {
+    'total-tasks': total,
+    'your-tasks': totalYour,
+    'claude-tasks': totalClaude,
+    'done-count': totalDone,
+    'total-progress': Math.round((totalDone/total)*100) + '% COMPLETE'
+  };
+  Object.keys(els).forEach(function(id){
+    var e = document.getElementById(id);
+    if(e) e.textContent = els[id];
+  });
+}
+
+updateProgress();
+</script>
+
+</body>
+</html>
